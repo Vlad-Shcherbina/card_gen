@@ -1,0 +1,1 @@
+for %%f in (*order*.txt) do python gen.py %%f

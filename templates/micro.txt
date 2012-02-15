@@ -1,0 +1,11 @@
+{title}
+---
+{image}
+---
+{open}
+---
+{strip}
+===
+{agent}
+{effect}
+===
