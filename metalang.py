@@ -13,6 +13,7 @@ for line in open('replacements.txt'):
 class Environment(object):
     def __init__(self):
         self.random = random.Random(123)
+        self.unique_codes = {}
 
 
 default_env = Environment()
@@ -20,12 +21,29 @@ default_env = Environment()
 
 def process(s, env=default_env):
     def repl(m):
-        if os.path.exists(m.group(1)):
-            items = open(m.group(1)).readlines()
+        m = m.group(1)
+
+        unique = False
+        u = 'unique '
+        if m.startswith(u):
+            m = m[len(u):]
+            unique = True
+
+        if os.path.exists(m):
+            items = open(m).readlines()
             items = filter(None, items)
         else:
-            items = m.group(1).split('|')
-        result = env.random.choice(items)
+            items = m.split('|')
+
+        if unique:
+            items = tuple(items)
+            if m not in env.unique_codes:
+                env.unique_codes[m] = 0
+            result = items[env.unique_codes[m]]
+            env.unique_codes[m] += 1
+        else:
+            result = env.random.choice(items)
+
         return replacements.get(result, result)
 
     return re.sub(r'\{([^\}]+)\}', repl, s)
